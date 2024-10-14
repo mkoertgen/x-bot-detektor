@@ -23,7 +23,7 @@ var recentFollowersCmd = &cobra.Command{
 		}
 
 		p := &types.GetByUsernameInput{
-			Username: "michimani210",
+			Username: cmd.Flag("username").Value.String(),
 			Expansions: fields.ExpansionList{
 				fields.ExpansionPinnedTweetID,
 			},
