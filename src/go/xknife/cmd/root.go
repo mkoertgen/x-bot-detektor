@@ -32,15 +32,22 @@ func Execute() {
 }
 
 var cfgFile string
+var userName string
+var userId string
+var pageSize int
 var xClient, _ = gotwi.NewClient(&gotwi.NewClientInput{
 	AuthenticationMethod: gotwi.AuthenMethodOAuth2BearerToken,
 })
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringP("username", "u", "mkoertg", "X user account")
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.xknife.yaml)")
-	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
+	rootCmd.PersistentFlags().StringVarP(&userName, "user", "u", "mkoertg", "X user account name")
+	rootCmd.PersistentFlags().StringVar(&userId, "id", "", "X user id")
+	rootCmd.PersistentFlags().IntVarP(&pageSize, "size", "s", 20, "Number of items to list at once")
+	viper.BindPFlag("user", rootCmd.PersistentFlags().Lookup("user"))
+	viper.BindPFlag("id", rootCmd.PersistentFlags().Lookup("id"))
+	viper.BindPFlag("size", rootCmd.PersistentFlags().Lookup("size"))
 }
 
 func initConfig() {
