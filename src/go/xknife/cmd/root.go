@@ -3,9 +3,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/michimani/gotwi"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,11 +32,14 @@ func Execute() {
 }
 
 var cfgFile string
+var xClient, _ = gotwi.NewClient(&gotwi.NewClientInput{
+	AuthenticationMethod: gotwi.AuthenMethodOAuth2BearerToken,
+})
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().String("username", "mkoertg", "X user account")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.xknife.yaml)")
+	rootCmd.PersistentFlags().StringP("username", "u", "mkoertg", "X user account")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.xknife.yaml)")
 	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
 }
 
@@ -61,6 +65,11 @@ func initConfig() {
 		var configFileNotFoundError viper.ConfigFileNotFoundError
 		if errors.As(err, &configFileNotFoundError) {
 			// Config file not found; ignore error if desired
+			//fmt.Println("Config file not found.")
+			if cfgFile != "" {
+				fmt.Println("Specified config file", cfgFile, "not found.")
+				os.Exit(1)
+			}
 		}
 	}
 }
